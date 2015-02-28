@@ -6,12 +6,15 @@ package edu.calstatela.cs454.data_extraction;
 
 import gnu.getopt.Getopt;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class ExtractorApp {
+	
+	 static String toDel = null;
 	
 	public void startExtractor(String path){
 		// Initialize Crawler & Extractor
@@ -28,9 +31,12 @@ public class ExtractorApp {
 				System.out.println(visitedLinks.size());
 				List<CrawledLink> test = new ArrayList<CrawledLink>(visitedLinks);
 				
+				System.out.println(new File(test.get(0).getLocalPath()).getParent()); 
+				
 				for(int i = 0; i < test.size(); i++){
 					try {
 						System.out.println("Link No: " + i + "  Link Local: " + test.get(i).getLocalPath());
+						
 						Map<String, String> metadata = extr.extractMeta(test.get(i).getLocalPath());
 						test.get(i).setMetadata(metadata);
 					} catch (Exception e) {
@@ -42,6 +48,9 @@ public class ExtractorApp {
 				}
 				
 				saving.store2(test);
+				
+				 toDel = new File(test.get(0).getLocalPath()).getParent();
+				 
 	}
 
 	public static void main(String args[]) {
@@ -86,7 +95,9 @@ public class ExtractorApp {
 		System.out.println("Inputted depth: " + dir);
 
 		new ExtractorApp().startExtractor(dir);
-
+		
+		
+		Deleter.delLocalFolder(toDel);
 		
 
 	}
